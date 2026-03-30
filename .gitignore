@@ -1,0 +1,39 @@
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database
+*.db
+*.sqlite
+
+# Vector store
+chroma_db/
+
+# ML models
+*.pt
+*.pth
+*.bin
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.cursor
+
+# Logs
+*.log
+logs/
