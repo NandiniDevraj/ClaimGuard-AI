@@ -9,8 +9,7 @@ class PIIScrubber:
     def __init__(self):
         self.analyzer = AnalyzerEngine()
         self.anonymizer = AnonymizerEngine()
-        
-        # Define what to replace PII with
+
         self.operators = {
             "PERSON": OperatorConfig(
                 "replace", {"new_value": "[PATIENT_NAME]"}
@@ -45,25 +44,27 @@ class PIIScrubber:
         }
 
     def scrub(self, text: str) -> dict:
-        """
-        Scrub PII from text.
-        Returns dict with scrubbed text and list of found entities.
-        """
+        """Scrub PII from text with confidence threshold filtering."""
         if not text or not text.strip():
             return {"scrubbed_text": text, "entities_found": []}
 
         try:
-            # Analyze text for PII
             analysis_results = self.analyzer.analyze(
                 text=text,
                 language="en",
                 entities=list(self.operators.keys())
             )
 
-            # Anonymize detected PII
+            # Filter low confidence — prevents CPT codes and
+            # clinical timeframes being wrongly redacted
+            filtered_results = [
+                r for r in analysis_results
+                if r.score >= 0.6
+            ]
+
             anonymized = self.anonymizer.anonymize(
                 text=text,
-                analyzer_results=analysis_results,
+                analyzer_results=filtered_results,
                 operators=self.operators
             )
 
@@ -72,7 +73,7 @@ class PIIScrubber:
                     "type": r.entity_type,
                     "score": round(r.score, 2)
                 }
-                for r in analysis_results
+                for r in filtered_results
             ]
 
             if entities_found:
@@ -88,8 +89,6 @@ class PIIScrubber:
 
         except Exception as e:
             logger.error(f"PII scrubbing failed: {e}")
-            # Return original text if scrubbing fails
-            # so pipeline doesn't break
             return {"scrubbed_text": text, "entities_found": []}
 
     def scrub_text(self, text: str) -> str:
