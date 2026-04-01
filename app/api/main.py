@@ -47,7 +47,10 @@ def root():
         "version": "1.0.0",
         "status": "running"
     }
-
+@app.get("/")
+def read_root():
+    return {"status": "ClaimGuard AI Backend is Running"}
+    
 @app.get("/health")
 def health():
     stats = vector_store.get_collection_stats()
