@@ -1,3 +1,11 @@
+---
+title: ClaimGuard AI
+emoji: 🏥
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
 # 🏥 Healthcare Prior Authorization Platform
 
 An AI-powered prior authorization and coverage intelligence platform 
